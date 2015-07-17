@@ -42,19 +42,21 @@ class mule (
   $basedir   = '/usr/local',
   $subdir    = 'mule',
   $java_home = '/usr/bin/java',
-){
+) {
   
-  $mule_home = $basedir/$subdir
-  archive { $mule:
+  $mule_home = "${basedir}/${subdir}"
+
+  archive { $mule_home:
     ensure => present,
     url    => $url,
     target => $basedir,
   }
 
-  user {$user: 
+  user { $user: 
     managehome => true,
-  }->
-  file {'/home/$user/.profile':
+  } ->
+
+  file { "/home/${user}/.profile":
     content => template('.profile.erb'),
     owner   => $user,
     group   => $group,
