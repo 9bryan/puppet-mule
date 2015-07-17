@@ -35,7 +35,28 @@
 #
 # Copyright 2015 Your name here, unless otherwise noted.
 #
-class mule {
+class mule (
+  $url       = 'https://repository-master.mulesoft.org/nexus/content/repositories/releases/org/mule/distributions/mule-standalone/3.7.0/mule-standalone-3.7.0.tar.gz'
+  $user      = 'mule'
+  $group     = 'mule'
+  $basedir   = '/usr/local'
+  $subdir    = 'mule' 
+  $java_home = '/usr/bin/java'
+){
+  
+  $muledir = $basedir/$subdir
+  archive { $mule:
+    ensure => present,
+    url    => $url,
+    target => $basedir,
+  }
 
+  user {$user: 
+    managehome => true,
+  }->
+  file {'/home/$user/.profile':
+    content => template('.profile.erb'),
+    owner   => $user,
+  }
 
 }
