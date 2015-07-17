@@ -44,7 +44,7 @@ class mule (
   $java_home = '/usr/bin/java'
 ){
   
-  $muledir = $basedir/$subdir
+  $mule_home = $basedir/$subdir
   archive { $mule:
     ensure => present,
     url    => $url,
@@ -57,6 +57,8 @@ class mule (
   file {'/home/$user/.profile':
     content => template('.profile.erb'),
     owner   => $user,
+    group   => $group,
+    mode    => '0644',
   }
 
 }
