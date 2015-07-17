@@ -35,21 +35,26 @@
 #
 # Copyright 2015 Your name here, unless otherwise noted.
 #
-class mule (
+define mule (
   $url       = 'https://repository-master.mulesoft.org/nexus/content/repositories/releases/org/mule/distributions/mule-standalone/3.7.0/mule-standalone-3.7.0.tar.gz',
-  $user      = 'mule',
-  $group     = 'mule',
+  $archive   = 'mule-standalone-3.7.0.tar.gz',
+  $user      = $title,
+  $group     = $title,
   $basedir   = '/usr/local',
-  $subdir    = 'mule',
+  $subdir    = $title,
   $java_home = '/usr/bin/java',
 ) {
   
   $mule_home = "${basedir}/${subdir}"
+  include 'archive'
 
-  archive { $mule_home:
-    ensure => present,
-    url    => $url,
-    target => $basedir,
+  archive { "/tmp/${archive}":
+    source       => $url,
+    extract      => true,
+    cleanup      => true,
+    extract_path => $mule_home,
+    user         => $user,
+    group        => $group,
   }
 
   user { $user: 
