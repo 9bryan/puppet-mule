@@ -47,26 +47,28 @@ define mule (
 ) {
    
   $mule_home = "${basedir}/${subdir}"
-  include 'archive'
+  require 'archive'
 
   user { $user:
+    ensure     => present,
     managehome => true,
-  }
+  } ->
 
   file { $mule_home:
     ensure => directory,
     owner  => $user,
     group  => $group,
     mode   => '0755',
-  }
+  } ->
 
   archive { "/tmp/${archive}":
-    source       => $url,
-    extract      => true,
-    cleanup      => true,
-    extract_path => $mule_home,
-    user         => $user,
-    group        => $group,
+    source        => $url,
+    extract       => true,
+    cleanup       => true,
+    extract_path  => $mule_home,
+    user          => $user,
+    group         => $group,
+    extract_flags => "--strip 1 -xzf" ,
   }
 
   file { "/home/${user}/.profile":

@@ -9,7 +9,7 @@ MULE_HOME="<%= @mule_home %>"
 JAVA_HOME="<%= @java_home %>"
 PID_FILE="<%= @mule_home %>/bin/mule.pid"
 
-PROG="mule"
+PROG="<%= @service_name %>"
 
 if [ -f /lib/lsb/init-functions ]; then
     . /lib/lsb/init-functions
