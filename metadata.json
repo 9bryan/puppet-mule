@@ -1,0 +1,14 @@
+{
+  "name": "9bryan-mule",
+  "version": "0.1.0",
+  "author": "9bryan",
+  "summary": "Module to manage mule application",
+  "license": "none",
+  "source": "https://github.com/9bryan/mule",
+  "project_page": "https://github.com/9bryan/mule",
+  "issues_url": "https://github.com/9bryan/mule/issues",
+  "dependencies": [
+    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
+  ]
+}
+
