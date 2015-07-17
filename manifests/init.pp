@@ -36,12 +36,12 @@
 # Copyright 2015 Your name here, unless otherwise noted.
 #
 class mule (
-  $url       = 'https://repository-master.mulesoft.org/nexus/content/repositories/releases/org/mule/distributions/mule-standalone/3.7.0/mule-standalone-3.7.0.tar.gz'
-  $user      = 'mule'
-  $group     = 'mule'
-  $basedir   = '/usr/local'
-  $subdir    = 'mule' 
-  $java_home = '/usr/bin/java'
+  $url       = 'https://repository-master.mulesoft.org/nexus/content/repositories/releases/org/mule/distributions/mule-standalone/3.7.0/mule-standalone-3.7.0.tar.gz',
+  $user      = 'mule',
+  $group     = 'mule',
+  $basedir   = '/usr/local',
+  $subdir    = 'mule',
+  $java_home = '/usr/bin/java',
 ){
   
   $mule_home = $basedir/$subdir
