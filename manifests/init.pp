@@ -36,17 +36,29 @@
 # Copyright 2015 Your name here, unless otherwise noted.
 #
 define mule (
-  $url       = 'https://repository-master.mulesoft.org/nexus/content/repositories/releases/org/mule/distributions/mule-standalone/3.7.0/mule-standalone-3.7.0.tar.gz',
-  $archive   = 'mule-standalone-3.7.0.tar.gz',
-  $user      = $title,
-  $group     = $title,
-  $basedir   = '/usr/local',
-  $subdir    = $title,
-  $java_home = '/usr/bin/java',
+  $url          = 'https://repository-master.mulesoft.org/nexus/content/repositories/releases/org/mule/distributions/mule-standalone/3.7.0/mule-standalone-3.7.0.tar.gz',
+  $archive      = 'mule-standalone-3.7.0.tar.gz',
+  $user         = $title,
+  $group        = $title,
+  $basedir      = '/usr/local',
+  $subdir       = $title,
+  $java_home    = '/usr/bin/java',
+  $service_name = $title,
 ) {
-  
+   
   $mule_home = "${basedir}/${subdir}"
   include 'archive'
+
+  user { $user:
+    managehome => true,
+  }
+
+  file { $mule_home:
+    ensure => directory,
+    owner  => $user,
+    group  => $group,
+    mode   => '0755',
+  }
 
   archive { "/tmp/${archive}":
     source       => $url,
@@ -57,13 +69,9 @@ define mule (
     group        => $group,
   }
 
-  user { $user: 
-    managehome => true,
-  } ->
-
   file { "/home/${user}/.profile":
     ensure  => file,
-    content => template('.profile.erb'),
+    content => template('mule/profile.erb'),
     owner   => $user,
     group   => $group,
     mode    => '0644',
@@ -71,7 +79,7 @@ define mule (
 
   file { "/etc/init.d/${service_name}":
     ensure  => file,
-    content => template('mule.init.erb'),
+    content => template('mule/mule.init.erb'),
     owner   => 'root',
     group   => 'root',
     mode    => '0755',
