@@ -57,10 +57,19 @@ class mule (
   } ->
 
   file { "/home/${user}/.profile":
+    ensure  => file,
     content => template('.profile.erb'),
     owner   => $user,
     group   => $group,
     mode    => '0644',
+  }
+
+  file { "/etc/init.d/${service_name}":
+    ensure  => file,
+    content => template('mule.init.erb'),
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
   }
 
 }
