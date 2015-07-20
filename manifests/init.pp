@@ -1,6 +1,6 @@
 # == Class: mule
 #
-# Full description of class mule here.
+# This module allows you to define and install multiple instances of MuleSoft ESB community.
 #
 # === Parameters
 #
@@ -10,30 +10,13 @@
 #   Explanation of what this parameter affects and what it defaults to.
 #   e.g. "Specify one or more upstream ntp servers as an array."
 #
-# === Variables
-#
-# Here you should define a list of variables that this module would require.
-#
-# [*sample_variable*]
-#   Explanation of how this variable affects the funtion of this class and if
-#   it has a default. e.g. "The parameter enc_ntp_servers must be set by the
-#   External Node Classifier as a comma separated list of hostnames." (Note,
-#   global variables should be avoided in favor of class parameters as
-#   of Puppet 2.6.)
-#
-# === Examples
-#
-#  class { 'mule':
-#    servers => [ 'pool.ntp.org', 'ntp.local.company.com' ],
-#  }
-#
 # === Authors
 #
-# Author Name <author@domain.com>
+# Bryan Wood <bryan.wood@puppetlabs.com>
 #
 # === Copyright
 #
-# Copyright 2015 Your name here, unless otherwise noted.
+# Copyright 2015 Bryan Wood, unless otherwise noted.
 #
 define mule (
   $url          = 'https://repository-master.mulesoft.org/nexus/content/repositories/releases/org/mule/distributions/mule-standalone/3.7.0/mule-standalone-3.7.0.tar.gz',
@@ -61,7 +44,7 @@ define mule (
     mode   => '0755',
   } ->
 
-  archive { "/tmp/${archive}":
+  archive { "/tmp/${title}-${archive}":
     source        => $url,
     extract       => true,
     cleanup       => true,
@@ -77,6 +60,7 @@ define mule (
     owner   => $user,
     group   => $group,
     mode    => '0644',
+    require => User[$user],
   }
 
   file { "/etc/init.d/${service_name}":
@@ -85,6 +69,12 @@ define mule (
     owner   => 'root',
     group   => 'root',
     mode    => '0755',
+  }
+
+  service { $service_name:
+    ensure   => running,
+    enable   => true,
+    require  => [ File["/etc/init.d/${service_name}"], Archive["/tmp/${title}-${archive}"] ]
   }
 
 }
