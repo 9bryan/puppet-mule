@@ -48,7 +48,7 @@ mule { 'mule1':
 
 ## Limitations
 
-Currently only tested with PE 3.8 on RHEL 6
+Currently only tested with PE 2015.2 on RHEL 6
 
 ## Development
 
