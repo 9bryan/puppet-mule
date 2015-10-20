@@ -19,18 +19,16 @@
 # Copyright 2015 Bryan Wood, unless otherwise noted.
 #
 define mule (
-  $url          = 'https://repository-master.mulesoft.org/nexus/content/repositories/releases/org/mule/distributions/mule-standalone/3.7.0/mule-standalone-3.7.0.tar.gz',
-  $archive      = 'mule-standalone-3.7.0.tar.gz',
-  $user         = $title,
-  $group        = $title,
-  $basedir      = '/usr/local',
-  $subdir       = $title,
-  $java_home    = '/usr/bin/java',
-  $service_name = $title,
+  $download_base_url = 'https://repository-master.mulesoft.org/nexus/content/repositories/releases/org/mule/distributions/mule-standalone/3.7.0',
+  $filename          = 'mule-standalone-3.7.0.tar.gz',
+  $user              = $title,
+  $group             = $title,
+  $basedir           = '/usr/local',
+  $subdir            = $title,
+  $java_home         = '/usr/bin/java',
+  $service_name      = $title,
 ) {
-   
   $mule_home = "${basedir}/${subdir}"
-  require 'archive'
 
   user { $user:
     ensure     => present,
@@ -44,14 +42,19 @@ define mule (
     mode   => '0755',
   } ->
 
-  archive { "/tmp/${title}-${archive}":
-    source        => $url,
-    extract       => true,
-    cleanup       => true,
-    extract_path  => $mule_home,
-    user          => $user,
-    group         => $group,
-    extract_flags => "--strip 1 -xzf" ,
+  staging::file { "${title}-${filename}":
+    source => "${download_base_url}/${filename}",
+  }
+
+  #Extract Hadoop media to $hadoop_home
+  staging::extract { "${title}-${filename}":
+    source  => "/opt/staging/mule/${title}-${filename}",
+    target  => $mule_home,
+    user    => $user,
+    group   => $user,
+    strip   => 1,
+    creates => "${mule_home}/bin",
+    require => [File[$mule_home],Staging::File["${title}-${filename}"]],
   }
 
   file { "/home/${user}/.profile":
@@ -72,9 +75,9 @@ define mule (
   }
 
   service { $service_name:
-    ensure   => running,
-    enable   => true,
-    require  => [ File["/etc/init.d/${service_name}"], Archive["/tmp/${title}-${archive}"] ]
+    ensure  => running,
+    enable  => true,
+    require => [ File["/etc/init.d/${service_name}"], Staging::Extract["${title}-${filename}"] ]
   }
 
 }
